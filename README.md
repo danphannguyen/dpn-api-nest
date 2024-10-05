@@ -1,85 +1,103 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+1) [Controller](https://docs.nestjs.com/controllers) 
+   
+   Les controllers permettent la logique qui incombe à une route avec les différents types de requêtes : POST / GET / UPDATE 
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+    - Permet de gérer les paramètres
+    - La logique
+    - Ce que l'API va renvoyer
+    - Faire appel a des services/providers
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+2) [Providers](https://docs.nestjs.com/providers)
 
-## Description
+    Encapsule une logique réutilisable dans toute l'application exemple un providers "Cats" permettrait :
+      - Création
+      - Modification
+      - Suppression
+      - Lecture
+    de chats
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+3) [Modules](https://docs.nestjs.com/modules)
 
-## Project setup
+  Les modules permettent de regrouper un ensemble de logique en un "module" pour faciliter leurs imports
 
-```bash
-$ npm install
-```
+  === Exemple j'ai :
+    - Un service ( cats )
+    - Un controller ( cats )
+  
+  Au lieu de les importer chacun un par un, on peut les regrouper dans un "module" et importer uniquement le module
 
-## Compile and run the project
+4) [Middleware](https://docs.nestjs.com/middleware)
 
-```bash
-# development
-$ npm run start
+  Les Middlewares permettent d'executer du code avant le code du controller. 
+  
+  === Exemple : 
+  = logger.middleware.ts :
+  import { Injectable, NestMiddleware } from '@nestjs/common';
+  import { Request, Response, NextFunction } from 'express';
 
-# watch mode
-$ npm run start:dev
+  @Injectable()
+  export class LoggerMiddleware implements NestMiddleware {
+    use(req: Request, res: Response, next: NextFunction) {
+      console.log('Request...');
+      next();
+    }
+  }
 
-# production mode
-$ npm run start:prod
-```
+  = export class AppModule implements NestModule {
+    configure(consumer: MiddlewareConsumer) {
+      consumer
+        .apply(LoggerMiddleware)
+        .forRoutes('cats');
+    }
+  }
 
-## Run tests
+  Va afficher un Request... dans le terminal pour toute les requètes 
 
-```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+  Ce qui permettent aussi de spécifier des règles dans les url.
+  === Exemple les "Route wildcards" : 
+  @Get('ab*cd')
+    find() {
+        return 'This route uses a wildcard';
+    }
 
-# test coverage
-$ npm run test:cov
-```
+  if we go to : http://localhost:3000/cats/abdcd
+  it will return : This route uses a wildcard
 
-## Resources
 
-Check out a few resources that may come in handy when working with NestJS:
+  On peut tout de même exclure certaine route pour ne pas appeler le code du middleware
+  === Exemple d'exclusion de route : 
+  consumer
+  .apply(LoggerMiddleware)
+  .exclude(
+    { path: 'cats', method: RequestMethod.GET },
+    { path: 'cats', method: RequestMethod.POST },
+    'cats/(.*)',
+  )
+  .forRoutes(CatsController);
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+  ici les routes spécifié sont exclus du middleware et donc ne s'applique pas 
 
-## Support
+5) [Exeception filters](https://docs.nestjs.com/exception-filters) 
+  Les "Exeception filters" est un layer implémenté de base dans Nest pour gérer les erreurs, typiquement lorsqu'une erreur n'est pas gérer par notre code, c'est lui qui s'en charge
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+  === Exemple de built-in exceptions
+  throw new BadRequestException('Something bad happened', { cause: new Error(), description: 'Some error description' })
 
-## Stay in touch
+  === Custom Exception filter
+  @Post()
+  @UseFilters(HttpExceptionFilter)
+  async create(@Body() createCatDto: CreateCatDto) {
+      throw new ForbiddenException();
+  }
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+  A noter que le @UseFilters() peut se mettre au dessus du export class CatsController {} pour être appliquer a tout le scope( à toute la root) ou encore sur toute l'application avec : app.useGlobalFilters(new HttpExceptionFilter()). On peut aussi le spécifier dans un module spécifique.
 
-## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+6) Pipes
+
+
+7) Guard
+8) Interceptors
+9)  Custom Decorators
