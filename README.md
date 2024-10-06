@@ -95,9 +95,22 @@
 
 
 
-6) Pipes
+6) [Pipes](https://docs.nestjs.com/pipes)
+
+   Les pipes ont deux cas d'utilisation typiques :
+    - transformation: transforme input data dans le format voulu (e.g., from string to integer)
+    - validation : évaluer les données d'entrée et, si elles sont valides, les laisser passer inchangées ; sinon, lancer une exception
+
+  Il y a des pipes déjà présent nativement ( built-in ) mais on peut aussi en créer de nouveau from scratch
+
+  Pour la validation, plusieurs approche peuvent être utilisé :
+  - [Zod](https://docs.nestjs.com/pipes#object-schema-validation)
+  - [class-validator](https://docs.nestjs.com/pipes#class-validator)
+
+  Enfin les pipes permettent aussi de set des valeurs par défauts :
+  - [Providing defaults](https://docs.nestjs.com/pipes#providing-defaults)
 
 
-7) Guard
-8) Interceptors
-9)  Custom Decorators
+1) Guard
+2) Interceptors
+3)  Custom Decorators
