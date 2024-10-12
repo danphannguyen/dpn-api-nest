@@ -111,6 +111,23 @@
   - [Providing defaults](https://docs.nestjs.com/pipes#providing-defaults)
 
 
-1) Guard
-2) Interceptors
-3)  Custom Decorators
+7) Guard
+  Les Guards ont une seule responsabilité. Ils déterminent si une requête donnée sera prise en charge par le routes handler ou non, en fonction de certaines conditions (comme les permissions, les rôles, les ACL, etc.) présentes au moment de l'exécution.
+
+  -> [Authorization](https://docs.nestjs.com/guards#authorization-guard)
+
+8) Interceptors
+  Les intercepteurs possèdent un ensemble de capacités utiles qui s'inspirent de la technique de la Programmation Orientée Aspect (AOP). Ils permettent de :
+
+    - ajouter de la logique supplémentaire avant / après l'exécution d'une méthode,
+    - transformer le résultat retourné par une fonction,
+    - transformer l'exception envoyé par une fonction,
+    - étendre le comportement de base d'une fonction,
+    - remplacer complètement une fonction en fonction de certaines conditions spécifiques (par exemple, à des fins de mise en cache).
+
+  -> Logging Interceptor 
+
+
+9)  Custom Decorators
+
+  Créer des décorateurs customs pour répondre à des besoins spécifiques 
