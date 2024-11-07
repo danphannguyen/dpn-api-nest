@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { VersioningDirectusModule } from './versioning-directus/versioning-directus.module';
 
 @Module({
-  imports: [CatsModule],
+  imports: [CatsModule, VersioningDirectusModule],
   controllers: [AppController],
   providers: [AppService],
 })
